@@ -31,3 +31,9 @@ python -m unittest test_game.py
 ## Future enhancements
 
 Ticker autocomplete, explicit new-game controls, improved market-session handling, additional scoring rules, deployment.
+
+## Step 4 additions
+- Sidebar contains stock, interval, wager, direction, reveal, end, and reset controls.
+- Volume bars share the candlestick x-axis and use the same green/red direction colors.
+- Dates, prices, volume scale, and hover remain hidden until **End game**.
+- End game reveals the axes and price hover details; Reset game returns to NVDA/5m.
