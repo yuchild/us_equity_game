@@ -64,7 +64,19 @@ m3.metric("Rounds Played", len(st.session_state.rounds))
 
 if st.session_state.last_result is not None:
     result = st.session_state.last_result
-    st.success(f"Last round: {result.direction} · {result.candles} candle(s) · {result.profit:+,.2f} USD ({result.price_return:+.2%} stock move)") if result.profit >= 0 else st.error(f"Last round: {result.direction} · {result.candles} candle(s) · {result.profit:+,.2f} USD ({result.price_return:+.2%} stock move)")
+    # Display the result of the most recent wager
+    if result is not None:
+        message = (
+            f"Last round: {result.direction} · "
+            f"{result.candles} candle(s) · "
+            f"{result.profit:+,.2f} USD "
+            f"({result.price_return:+.2%} stock move)"
+        )
+
+        if result.profit >= 0:
+            st.success(message)
+        else:
+            st.error(message)
 
 remaining = len(history) - cursor
 if st.session_state.ended:
