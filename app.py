@@ -10,10 +10,11 @@ st.title('📈 US Equity Game')
 st.caption('Historical market prediction game · No real-money trading')
 
 
-def new_game(history, selection):
+def new_game(history, selection, starting_bankroll):
     st.session_state.game_selection = selection
     st.session_state.cursor = choose_start(history)
-    st.session_state.bankroll = STARTING_BANKROLL
+    st.session_state.bankroll = starting_bankroll
+    st.session_state.starting_bankroll = starting_bankroll
     st.session_state.rounds = []
     st.session_state.ended = False
     st.session_state.last_result = None
@@ -22,6 +23,7 @@ def new_game(history, selection):
 if st.session_state.pop('reset_defaults', False):
     st.session_state['ticker_widget'] = 'NVDA'
     st.session_state['interval_widget'] = '5m'
+    st.session_state['starting_bankroll_widget'] = STARTING_BANKROLL
 
 with st.container():
     st.header('Market selection')
@@ -45,9 +47,14 @@ if len(history) < VISIBLE_CANDLES + 1:
                f'at least {VISIBLE_CANDLES + 1} are needed. Try another ticker or interval.')
     st.stop()
 
-selection = (ticker, interval)
+# The starting amount is part of game identity. Changing it begins a new game.
+# The control lives alongside the other game controls, to the right of the chart.
+if 'starting_bankroll_widget' not in st.session_state:
+    st.session_state.starting_bankroll_widget = STARTING_BANKROLL
+starting_bankroll = float(st.session_state.starting_bankroll_widget)
+selection = (ticker, interval, starting_bankroll)
 if st.session_state.get('game_selection') != selection:
-    new_game(history, selection)
+    new_game(history, selection, starting_bankroll)
 
 cursor = st.session_state.cursor
 window = history.iloc[cursor - VISIBLE_CANDLES:cursor]
@@ -61,7 +68,7 @@ with chart_col:
         st.caption('Game complete — dates, price scale, volume scale, and price hover details are now visible.')
 
     balance = st.session_state.bankroll
-    pnl = balance - STARTING_BANKROLL
+    pnl = balance - st.session_state.starting_bankroll
     m1, m2, m3 = st.columns(3)
     m1.metric('Bankroll', f'${balance:,.2f}')
     m2.metric('Total P&L', f'${pnl:+,.2f}')
@@ -79,6 +86,16 @@ with chart_col:
 remaining = len(history) - cursor
 with controls_col:
     st.header('Game controls')
+    st.number_input(
+        'Starting bankroll ($)',
+        min_value=0.01,
+        value=STARTING_BANKROLL,
+        step=1000.0,
+        format='%.2f',
+        key='starting_bankroll_widget',
+        help='Changing this amount starts a fresh game and clears previous rounds.',
+    )
+    st.caption('Changing the starting bankroll begins a new game.')
     st.divider()
     if ended:
         st.success(f'Game ended · Final P&L: ${pnl:+,.2f} · {len(st.session_state.rounds)} rounds')
@@ -116,7 +133,7 @@ with controls_col:
         st.session_state.ended = True
         st.rerun()
     if st.button('Reset game', use_container_width=True):
-        for key in ('game_selection', 'cursor', 'bankroll', 'rounds', 'ended', 'last_result'):
+        for key in ('game_selection', 'cursor', 'bankroll', 'starting_bankroll', 'rounds', 'ended', 'last_result'):
             st.session_state.pop(key, None)
         st.session_state['reset_defaults'] = True
         st.rerun()

@@ -19,13 +19,13 @@ python -m unittest test_game.py
 
 ## Rules
 
-- Begin with $1,000, no real money involved.
+- Begin with $10,000 by default (adjustable), no real money involved.
 - The chart shows 60 candles, with dates and price labels hidden.
 - Choose Up or Down, wager no more than your current bankroll, and reveal 1, 3, or 5 candles.
 - Profit = wager × (exit close / entry close − 1), multiplied by +1 for Up or −1 for Down.
 - Wagers are independent long/short exposures; no leverage, fees, spreads, or interest are modeled.
 - The chart rolls forward 1/3/5 candles after each round.
-- End Game freezes the score; Reset starts a fresh random game with NVDA/5m and $1,000.
+- End Game freezes the score; Reset starts a fresh random game with NVDA/5m and $10,000.
 - Yahoo Finance data availability varies. Only completed historical candles are used where available; data are not guaranteed accurate.
 
 ## Future enhancements
@@ -37,3 +37,9 @@ Ticker autocomplete, explicit new-game controls, improved market-session handlin
 - Volume bars share the candlestick x-axis and use the same green/red direction colors.
 - Dates, prices, volume scale, and hover remain hidden until **End game**.
 - End game reveals the axes and price hover details; Reset game returns to NVDA/5m.
+
+## Step 6 additions
+- Default starting bankroll $10,000; adjustable in the right-side controls. Changing it starts a new game.
+- Default wager $1,000, capped by the current bankroll.
+- Total P&L compares the current bankroll with the selected starting bankroll.
+- Reset restores the default $10,000 starting bankroll.

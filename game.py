@@ -1,7 +1,7 @@
 """Pure game calculations; no Streamlit dependency."""
 from dataclasses import dataclass
 
-STARTING_BANKROLL = 1000.0
+STARTING_BANKROLL = 10000.0
 
 @dataclass(frozen=True)
 class Result:
